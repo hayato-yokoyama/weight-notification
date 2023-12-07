@@ -1,0 +1,97 @@
+import { format, isWithinInterval, parse, subDays } from "date-fns";
+import { FetchData, WeightRecord } from ".";
+
+/** 体重データを取得 */
+export const fetchWeightData = async () => {
+  const url = "https://www.healthplanet.jp/status/innerscan.json";
+  /** 15日前（YYYYMMDD000000） */
+  const date15DaysAgo = format(subDays(new Date(), 15), "yyyyMMdd") + "000000";
+  /** 1日前（YYYYMMDD000000） */
+  const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "000000";
+
+  const params = {
+    access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN as string,
+    date: "1",
+    from: date15DaysAgo,
+    to: date1DayAgo,
+    tag: "6021",
+  };
+
+  try {
+    const query = new URLSearchParams(params).toString();
+    const response = await fetch(`${url}?${query}`);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error("Error fetching data from Health Planet API", error);
+    throw error;
+  }
+};
+
+/** 今週分(1~7日前)の体重の平均と先週分との体重の増減を算出 */
+export const calcWeightAverageDiff = (fetchData: FetchData) => {
+  /** 今週分(1~7日前)の体重と先週分(8~14日前)の体重を分けて取得 */
+  const { currentWeekWeight, prevWeekWeight } =
+    separateCurrentAndPrevWeekWeights(fetchData.data);
+
+  /** 今週分(1~7日前)の体重の平均 */
+  const currentWeekAverageWeight = calculateAverageWeight(currentWeekWeight);
+  /** 先週分(8~14日前)の体重の平均 */
+  const prevWeekAverageWeight = calculateAverageWeight(prevWeekWeight);
+
+  /** 体重の増減 */
+  const weeklyWeightDiffNumber =
+    currentWeekAverageWeight - prevWeekAverageWeight;
+  const weeklyWeightDiff =
+    weeklyWeightDiffNumber > 0
+      ? `+${weeklyWeightDiffNumber}`
+      : weeklyWeightDiffNumber.toFixed(2);
+
+  return { currentWeekAverageWeight, weeklyWeightDiff };
+};
+
+// 取得した体重データから今週分の体重と先週分の体重を分ける
+const separateCurrentAndPrevWeekWeights = (data: WeightRecord[]) => {
+  /** 1週間前の日付 */
+  const oneWeekAgo = subDays(new Date(), 7);
+
+  /** 今週分の体重 */
+  const currentWeekWeight = data.filter((record) =>
+    isWithinInterval(parseDate(record.date), {
+      start: oneWeekAgo,
+      end: new Date(),
+    })
+  );
+
+  /** 先週分の体重 */
+  const prevWeekWeight = data.filter(
+    (record) =>
+      !isWithinInterval(parseDate(record.date), {
+        start: oneWeekAgo,
+        end: new Date(),
+      })
+  );
+
+  return { currentWeekWeight, prevWeekWeight };
+};
+
+/** 'yyyyMMddHHmm' 形式の文字列をDateオブジェクトに変換 */
+const parseDate = (dateStr: string): Date => {
+  return parse(dateStr, "yyyyMMddHHmm", new Date());
+};
+
+/** 体重の平均を算出 */
+const calculateAverageWeight = (data: WeightRecord[]) => {
+  if (data.length === 0) {
+    return 0;
+  }
+
+  const totalWeight = data.reduce(
+    (sum, record) => sum + parseFloat(record.keydata),
+    0
+  );
+  return totalWeight / data.length;
+};
