@@ -83,15 +83,15 @@ const formatMessage = async () => {
       2
     )} kg (${weeklyWeightDiff()}kg)`;
 
-    console.log(message);
-
     // LINE通知
-    // await sendLineNotification(message);
+    await sendLineNotification(message);
   } catch (error) {
     console.error("Lambda function error", error);
     // 必要に応じてエラー処理
   }
 };
+
+formatMessage();
 
 // 取得した体重データから今週分の体重と先週分の体重を分ける
 const separateCurrentAndPrevWeekWeights = (data: WeightRecord[]) => {
