@@ -1,10 +1,9 @@
 name: Daily Weigth Notification
 
 on:
-  push:
-    branches: [main]
   schedule:
     - cron: "0 23 * * *" # UTCで毎日23時（JSTで翌日の8時）
+  workflow_dispatch:
 
 jobs:
   build-and-run:
