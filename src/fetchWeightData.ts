@@ -1,3 +1,4 @@
+import axios from "axios";
 import { format, isWithinInterval, parse, startOfDay, subDays } from "date-fns";
 import { FetchData, WeightRecord } from ".";
 
@@ -10,20 +11,19 @@ export const fetchWeightData = async () => {
   const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "235959";
 
   const params = {
-    access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN as string,
+    access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN,
     date: "1",
     from: date14DaysAgo,
     to: date1DayAgo,
     tag: "6021",
   };
+
   try {
-    const query = new URLSearchParams(params).toString();
-    const response = await fetch(`${url}?${query}`);
-    if (!response.ok) {
+    const response = await axios.get(url, { params });
+    if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
-    const data = await response.json();
-    return data;
+    return response.data;
   } catch (error) {
     console.error("Error fetching data from Health Planet API", error);
     throw error;
