@@ -23,14 +23,10 @@ const job = async () => {
   const fetchData: FetchData = await fetchWeight();
 
   /** 今週分(1~7日前)の体重の平均と先週分との体重の増減 */
-  const { currentWeekAverageWeight, weeklyWeightDiff } =
-    calcWeightAverageDiff(fetchData);
+  const { currentWeekAverageWeight, weeklyWeightDiff } = calcWeightAverageDiff(fetchData);
 
   /** 通知メッセージ */
-  const notificationMessage = formatMessage(
-    currentWeekAverageWeight,
-    weeklyWeightDiff
-  );
+  const notificationMessage = formatMessage(currentWeekAverageWeight, weeklyWeightDiff);
 
   // LINE通知
   await sendLineNotification(notificationMessage);

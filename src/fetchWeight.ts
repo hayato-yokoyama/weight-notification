@@ -4,7 +4,9 @@ import { FetchData, WeightRecord } from ".";
 
 /** 体重データを取得 */
 export const fetchWeight = async () => {
+  /** Health Planet API URL */
   const url = "https://www.healthplanet.jp/status/innerscan.json";
+
   /** 14日前（YYYYMMDD000000） */
   const date14DaysAgo = format(subDays(new Date(), 14), "yyyyMMdd") + "000000";
   /** 1日前（YYYYMMDD235959） */
@@ -33,8 +35,7 @@ export const fetchWeight = async () => {
 /** 今週分(1~7日前)の体重の平均と先週分との体重の増減を算出 */
 export const calcWeightAverageDiff = (fetchData: FetchData) => {
   /** 今週分(1~7日前)の体重と先週分(8~14日前)の体重を分けて取得 */
-  const { currentWeekWeight, prevWeekWeight } =
-    separateCurrentAndPrevWeekWeights(fetchData.data);
+  const { currentWeekWeight, prevWeekWeight } = separateCurrentAndPrevWeekWeights(fetchData.data);
 
   /** 今週分(1~7日前)の体重の平均 */
   const currentWeekAverageWeight = calculateAverageWeight(currentWeekWeight);
@@ -42,12 +43,9 @@ export const calcWeightAverageDiff = (fetchData: FetchData) => {
   const prevWeekAverageWeight = calculateAverageWeight(prevWeekWeight);
 
   /** 体重の増減 */
-  const weeklyWeightDiffNumber =
-    currentWeekAverageWeight - prevWeekAverageWeight;
+  const weeklyWeightDiffNumber = currentWeekAverageWeight - prevWeekAverageWeight;
   const weeklyWeightDiff =
-    weeklyWeightDiffNumber > 0
-      ? `+${weeklyWeightDiffNumber}`
-      : weeklyWeightDiffNumber.toFixed(2);
+    weeklyWeightDiffNumber > 0 ? `+${weeklyWeightDiffNumber}` : weeklyWeightDiffNumber.toFixed(2);
 
   return { currentWeekAverageWeight, weeklyWeightDiff };
 };
@@ -87,10 +85,7 @@ const calculateAverageWeight = (data: WeightRecord[]) => {
   if (data.length === 0) {
     return 0;
   }
+  const totalWeight = data.reduce((sum, record) => sum + parseFloat(record.keydata), 0);
 
-  const totalWeight = data.reduce(
-    (sum, record) => sum + parseFloat(record.keydata),
-    0
-  );
   return totalWeight / data.length;
 };

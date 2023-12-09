@@ -10,11 +10,7 @@ export const sendLineNotification = async (message: string) => {
   };
 
   try {
-    const response = await axios.post(
-      url,
-      `message=${encodeURIComponent(message)}`,
-      { headers }
-    );
+    const response = await axios.post(url, `message=${encodeURIComponent(message)}`, { headers });
     if (response.status !== 200) {
       throw new Error("Network response was not ok");
     }
@@ -25,13 +21,9 @@ export const sendLineNotification = async (message: string) => {
 };
 
 /** 通知メッセージの整形 */
-export const formatMessage = (
-  currentWeekAverageWeight: number,
-  weeklyWeightDiff: string
-) => {
+export const formatMessage = (currentWeekAverageWeight: number, weeklyWeightDiff: string) => {
   /** 通知メッセージ */
-  const message = `今週の平均体重: ${currentWeekAverageWeight.toFixed(
-    2
-  )} kg (${weeklyWeightDiff}kg)`;
+  const message = `今週の平均体重: ${currentWeekAverageWeight.toFixed(2)} kg (${weeklyWeightDiff}kg)`;
+
   return message;
 };
