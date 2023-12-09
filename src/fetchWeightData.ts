@@ -9,8 +9,6 @@ export const fetchWeightData = async () => {
   /** 1日前（YYYYMMDD235959） */
   const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "235959";
 
-  console.log(date14DaysAgo, date1DayAgo);
-
   const params = {
     access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN as string,
     date: "1",
