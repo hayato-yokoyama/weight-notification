@@ -23,7 +23,7 @@ export const sendLineNotification = async (message: string) => {
 /** 通知メッセージの整形 */
 export const formatMessage = (currentWeekAverageWeight: number, weeklyWeightDiff: string) => {
   /** 通知メッセージ */
-  const message = `今週の平均体重: ${currentWeekAverageWeight.toFixed(2)} kg (${weeklyWeightDiff}kg)`;
+  const message = `\n今週の体重 ${currentWeekAverageWeight.toFixed(2)}kg(${weeklyWeightDiff}kg)`;
 
   return message;
 };
