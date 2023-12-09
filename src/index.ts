@@ -1,8 +1,8 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-import { calcWeightAverageDiff, fetchWeightData } from "./fetchWeightData";
-import { formatMessage, sendLineNotification } from "./sendLineNotification";
+import { calcWeightAverageDiff, fetchWeight } from "./fetchWeight";
+import { formatMessage, sendLineNotification } from "./notify";
 
 export type WeightRecord = {
   date: string;
@@ -20,7 +20,7 @@ export type FetchData = {
 
 const job = async () => {
   /** 2週間分(1~14日前)の体重 */
-  const fetchData: FetchData = await fetchWeightData();
+  const fetchData: FetchData = await fetchWeight();
 
   /** 今週分(1~7日前)の体重の平均と先週分との体重の増減 */
   const { currentWeekAverageWeight, weeklyWeightDiff } =

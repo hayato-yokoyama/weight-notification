@@ -3,7 +3,7 @@ import { format, isWithinInterval, parse, startOfDay, subDays } from "date-fns";
 import { FetchData, WeightRecord } from ".";
 
 /** 体重データを取得 */
-export const fetchWeightData = async () => {
+export const fetchWeight = async () => {
   const url = "https://www.healthplanet.jp/status/innerscan.json";
   /** 14日前（YYYYMMDD000000） */
   const date14DaysAgo = format(subDays(new Date(), 14), "yyyyMMdd") + "000000";
