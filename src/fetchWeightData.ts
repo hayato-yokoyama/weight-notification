@@ -1,22 +1,23 @@
-import { format, isWithinInterval, parse, subDays } from "date-fns";
+import { format, isWithinInterval, parse, startOfDay, subDays } from "date-fns";
 import { FetchData, WeightRecord } from ".";
 
 /** 体重データを取得 */
 export const fetchWeightData = async () => {
   const url = "https://www.healthplanet.jp/status/innerscan.json";
-  /** 15日前（YYYYMMDD000000） */
-  const date15DaysAgo = format(subDays(new Date(), 15), "yyyyMMdd") + "000000";
-  /** 1日前（YYYYMMDD000000） */
-  const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "000000";
+  /** 14日前（YYYYMMDD000000） */
+  const date14DaysAgo = format(subDays(new Date(), 14), "yyyyMMdd") + "000000";
+  /** 1日前（YYYYMMDD235959） */
+  const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "235959";
+
+  console.log(date14DaysAgo, date1DayAgo);
 
   const params = {
     access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN as string,
     date: "1",
-    from: date15DaysAgo,
+    from: date14DaysAgo,
     to: date1DayAgo,
     tag: "6021",
   };
-
   try {
     const query = new URLSearchParams(params).toString();
     const response = await fetch(`${url}?${query}`);
@@ -55,8 +56,8 @@ export const calcWeightAverageDiff = (fetchData: FetchData) => {
 
 // 取得した体重データから今週分の体重と先週分の体重を分ける
 const separateCurrentAndPrevWeekWeights = (data: WeightRecord[]) => {
-  /** 1週間前の日付 */
-  const oneWeekAgo = subDays(new Date(), 7);
+  /** 1週間前の0時0分0秒 */
+  const oneWeekAgo = startOfDay(subDays(new Date(), 7));
 
   /** 今週分の体重 */
   const currentWeekWeight = data.filter((record) =>
