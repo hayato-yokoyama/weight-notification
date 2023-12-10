@@ -1,4 +1,4 @@
-name: Daily Weigth Notification
+name: Daily Weight Notification
 
 on:
   schedule:
