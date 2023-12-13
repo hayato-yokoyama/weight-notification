@@ -1,5 +1,6 @@
 import axios from "axios";
 import { format, isWithinInterval, parse, startOfDay, subDays } from "date-fns";
+import { utcToZonedTime } from "date-fns-tz";
 import { FetchData, WeightRecord } from ".";
 
 /** 体重データを取得 */
@@ -7,10 +8,13 @@ export const fetchWeight = async () => {
   /** Health Planet API URL */
   const url = "https://www.healthplanet.jp/status/innerscan.json";
 
+  /** 現在のJST時間を取得 */
+  const jstNow = utcToZonedTime(new Date(), "Asia/Tokyo");
+
   /** 14日前（YYYYMMDD000000） */
-  const date14DaysAgo = format(subDays(new Date(), 14), "yyyyMMdd") + "000000";
+  const date14DaysAgo = format(subDays(jstNow, 14), "yyyyMMdd") + "000000";
   /** 1日前（YYYYMMDD235959） */
-  const date1DayAgo = format(subDays(new Date(), 1), "yyyyMMdd") + "235959";
+  const date1DayAgo = format(subDays(jstNow, 1), "yyyyMMdd") + "235959";
 
   const params = {
     access_token: process.env.HEALTH_PLANET_ACCESS_TOKEN,
