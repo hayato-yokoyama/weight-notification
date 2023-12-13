@@ -45,7 +45,7 @@ export const calcWeightAverageDiff = (fetchData: FetchData) => {
   /** 体重の増減 */
   const weeklyWeightDiffNumber = currentWeekAverageWeight - prevWeekAverageWeight;
   const weeklyWeightDiff =
-    weeklyWeightDiffNumber > 0 ? `+${weeklyWeightDiffNumber}` : weeklyWeightDiffNumber.toFixed(2);
+    weeklyWeightDiffNumber > 0 ? `+${weeklyWeightDiffNumber.toFixed(2)}` : weeklyWeightDiffNumber.toFixed(2);
 
   return { currentWeekAverageWeight, weeklyWeightDiff };
 };
