@@ -1,6 +1,6 @@
 import axios from "axios";
 import { format, isWithinInterval, parse, startOfDay, subDays } from "date-fns";
-import { utcToZonedTime } from "date-fns-tz";
+import { toZonedTime } from "date-fns-tz";
 import { FetchData, WeightRecord } from ".";
 
 /** 体重データを取得 */
@@ -9,7 +9,7 @@ export const fetchWeight = async () => {
   const url = "https://www.healthplanet.jp/status/innerscan.json";
 
   /** 現在のJST時間を取得 */
-  const jstNow = utcToZonedTime(new Date(), "Asia/Tokyo");
+  const jstNow = toZonedTime(new Date(), "Asia/Tokyo");
 
   /** 14日前（YYYYMMDD000000） */
   const date14DaysAgo = format(subDays(jstNow, 14), "yyyyMMdd") + "000000";
