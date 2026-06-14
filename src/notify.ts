@@ -1,5 +1,3 @@
-import axios from "axios";
-
 export const sendLineNotification = async (message: string) => {
   const url = "https://notify-api.line.me/api/notify";
   const token = process.env.LINE_NOTIFY_TOKEN;
@@ -10,8 +8,12 @@ export const sendLineNotification = async (message: string) => {
   };
 
   try {
-    const response = await axios.post(url, `message=${encodeURIComponent(message)}`, { headers });
-    if (response.status !== 200) {
+    const response = await fetch(url, {
+      method: "POST",
+      headers,
+      body: `message=${encodeURIComponent(message)}`,
+    });
+    if (!response.ok) {
       throw new Error("Network response was not ok");
     }
   } catch (error) {
